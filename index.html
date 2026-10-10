@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CastFace Studio — 2D Face Creator for Novel-to-Film Cast</title>
+    <meta
+      name="description"
+      content="A professional 2D face-focused creation aid for authors and directors to design consistent, film-ready character casts across ages and generations."
+    />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%236366f1'/><path d='M30 40 Q50 25 70 40' stroke='white' stroke-width='6' fill='none'/><circle cx='38' cy='48' r='6' fill='white'/><circle cx='62' cy='48' r='6' fill='white'/><path d='M36 68 Q50 80 64 68' stroke='white' stroke-width='6' fill='none'/></svg>" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Global Studio Header -->
+      <header class="header">
+        <div class="brand-section">
+          <div class="brand-logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <div class="brand-title-wrap">
+            <h1>CastFace Studio <span class="badge-version">v1.0 Proof</span></h1>
+            <p class="brand-subtitle">Novel-to-Film 2D Cast Creation Rig</p>
+          </div>
+        </div>
+
+        <!-- Identity Bar -->
+        <div class="identity-bar">
+          <input type="text" id="input-character-name" class="character-name-input" value="Maya Lin" title="Character Name" />
+          <span class="identity-tag" id="badge-character-age">Age 26</span>
+          <span class="identity-tag" id="badge-character-birth">Born 1996</span>
+        </div>
+
+        <!-- Top Action Toolbar -->
+        <div class="toolbar-actions">
+          <button id="btn-undo" class="btn btn-icon-only" title="Undo (Ctrl+Z)" disabled>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 7v6h6"></path>
+              <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
+            </svg>
+          </button>
+          <button id="btn-redo" class="btn btn-icon-only" title="Redo (Ctrl+Y)" disabled>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 7v6h-6"></path>
+              <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13"></path>
+            </svg>
+          </button>
+
+          <button id="btn-load-json" class="btn" title="Open Character JSON (FR12.1)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            Load JSON
+          </button>
+          <input type="file" id="file-input-json" accept=".json" style="display: none;" />
+
+          <button id="btn-save-json" class="btn" title="Save Character JSON (FR12.1)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            Save JSON
+          </button>
+
+          <button id="btn-save-project" class="btn" title="Save Full Cast Project JSON (FR12.1)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            Project
+          </button>
+          <input type="file" id="file-input-project" accept=".json" style="display: none;" />
+
+          <button id="btn-open-bible" class="btn" title="Open Printable Character Bible (FR13.3)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            Bible
+          </button>
+
+          <button id="btn-export-agestrip" class="btn" title="Export 6-Age Progression Strip (FR13.2)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="9" y1="3" x2="9" y2="21"></line>
+              <line x1="15" y1="3" x2="15" y2="21"></line>
+            </svg>
+            Age Strip
+          </button>
+
+          <button id="btn-export-exprsheet" class="btn" title="Export 6-Emotion Acting Board (FR13.2)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Expressions
+          </button>
+
+          <button id="btn-export-batch-zip" class="btn" title="Batch Export Whole Cast as ZIP (FR13.4)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+            Batch ZIP
+          </button>
+
+          <button id="btn-export-growth-video" class="btn" title="Export Biological Growth Video Clip (FR13.5)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="23 7 16 12 23 17 23 7"></polygon>
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+            </svg>
+            Video
+          </button>
+
+          <button id="btn-export-png" class="btn" title="Export High-Res 2x PNG (FR13.1)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+            2x PNG
+          </button>
+
+          <button id="btn-export-svg" class="btn btn-primary" title="Export Vector SVG for trace-over (FR13.1)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Export SVG
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Workspace -->
+      <main class="workspace">
+        <!-- Viewport & Stage Canvas -->
+        <section class="viewport-panel">
+          <!-- Viewport Toolbar -->
+          <div class="viewport-toolbar">
+            <span style="font-size: 0.72rem; color: var(--text-muted); margin-right: 4px;">Light:</span>
+            <button id="btn-light-warm" class="lighting-btn active" data-light="warm-interior">Warm Int</button>
+            <button id="btn-light-neutral" class="lighting-btn" data-light="studio-neutral">Studio</button>
+            <button id="btn-light-cold" class="lighting-btn" data-light="cold-exterior">Cold Ext</button>
+          </div>
+
+          <!-- Real-time Telemetry Badge -->
+          <div class="telemetry-badge">
+            <div class="telemetry-dot"></div>
+            <span id="telemetry-stat">SVG Live &lt;2ms | 60 FPS</span>
+          </div>
+
+          <!-- Identity Continuity / Caricature Warning Banner (FR5.6, FR11.4) -->
+          <div id="banner-identity-warning" class="identity-warning-banner" style="display: none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <span id="text-identity-warning">Continuity Warning: Extreme combination detected.</span>
+          </div>
+
+          <!-- Scalable Vector Graphic Viewport Frame -->
+          <div class="canvas-frame-container">
+            <div id="svg-viewport-wrapper" class="svg-stage-wrapper">
+              <!-- Dynamically injected SVG Rig -->
+            </div>
+          </div>
+
+          <!-- Age Timeline Scrub Bar (FR4.1, FR4.7) -->
+          <div class="timeline-scrubber-bar">
+            <div class="timeline-header">
+              <div class="timeline-title">
+                <button id="btn-play-growth" class="btn btn-icon-only" title="Play Growth Cycle (FR4.7)" style="padding: 2px 7px; margin-right: 6px;">
+                  <svg id="icon-play-growth" width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                  </svg>
+                </button>
+                <span>Age Timeline Scrub (0 – 80)</span>
+              </div>
+              <span id="display-age-scrubber" class="timeline-age-display">26 years</span>
+            </div>
+
+            <input type="range" id="slider-timeline-age" class="range-slider" min="0" max="80" step="1" value="26" />
+
+            <div class="snap-buttons-row">
+              <button class="snap-pill" data-snap-age="5">5 Toddler</button>
+              <button class="snap-pill" data-snap-age="12">12 Child</button>
+              <button class="snap-pill" data-snap-age="18">18 Teen</button>
+              <button class="snap-pill active" data-snap-age="25">25 Adult</button>
+              <button class="snap-pill" data-snap-age="45">45 Mid-Age</button>
+              <button class="snap-pill" data-snap-age="70">70 Senior</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right Control Inspector -->
+        <aside class="inspector-panel">
+          <!-- Navigation Tabs -->
+          <div class="tab-navigation">
+            <button class="tab-btn active" data-tab="tab-core">Core Morph</button>
+            <button class="tab-btn" data-tab="tab-genetics">Genetics & Family</button>
+            <button class="tab-btn" data-tab="tab-features">Features</button>
+            <button class="tab-btn" data-tab="tab-color">Skin & Palette</button>
+            <button class="tab-btn" data-tab="tab-expression">Acting & Visemes</button>
+            <button class="tab-btn" data-tab="tab-style">Art Style</button>
+            <button class="tab-btn" data-tab="tab-novel">Novel Prose</button>
+            <button class="tab-btn" data-tab="tab-cast">Cast & Story Year</button>
+          </div>
+
+          <div class="inspector-scroll-area">
+            <!-- TAB 1: Core Morph Controls (Section 9 First Deliverable Core) -->
+            <div id="tab-core" class="tab-pane active">
+              <div class="control-group-card">
+                <div class="group-card-header">
+                  <span class="group-card-title">First Deliverable 5 Sliders</span>
+                  <span class="group-card-badge">Section 9 Req</span>
+                </div>
+
+                <!-- 1. Age (0 - 80) -->
+                <div class="slider-control-row">
+                  <div class="slider-label-bar">
+                    <label for="slider-age" class="slider-label">Biological Age (FR1.1, FR4.1)</label>
+                    <span id="val-age" class="slider-value-badge">26 yrs</span>
+                  </div>
+                  <input type="range" id="slider-age" class="range-slider" min="0" max="80" step="1" value="26" />
+                </div>
+
+                <!-- 2. Jaw Squareness vs Taper -->
+                <div class="slider-control-row">
+                  <div class="slider-label-bar">
+                    <label for="slider-jaw-square" class="slider-label">Jaw Squareness vs Taper (FR1.2)</label>
+                    <span id="val-jaw-square" class="slider-value-badge">0.42</span>
+                  </div>
+                  <input type="range" id="slider-jaw-square" class="range-slider" min="0" max="1" step="0.01" value="0.42" />
+                </div>
+
+                <!-- 3. Eye Spacing -->
+                <div class="slider-control-row">
+                  <div class="slider-label-bar">
+                    <label for="slider-eye-spacing" class="slider-label">Eye Spacing (FR2.1)</label>
+                    <span id="val-eye-spacing" class="slider-value-badge">0.50</span>
+                  </div>
+                  <input type="range" id="slider-eye-spacing" class="range-slider" min="0" max="1" step="0.01" value="0.50" />
+                </div>
+
+                <!-- 4. Skin Darkness / Melanin -->
+                <div class="slider-control-row">
+                  <div class="slider-label-bar">
+                    <label for="slider-skin-darkness" class="slider-label">Skin Lightness / Melanin (FR3.1)</label>
+                    <span id="val-skin-darkness" class="slider-value-badge">0.65</span>
+                  </div>
+                  <input type="range" id="slider-skin-darkness" class="range-slider" min="0.05" max="0.95" step="0.01" value="0.65" />
+                </div>
+
+                <!-- 5. Lip Fullness -->
+                <div class="slider-control-row">
+                  <div class="slider-label-bar">
+                    <label for="slider-lip-fullness" class="slider-label">Lip Fullness (FR2.5)</label>
+                    <span id="val-lip-fullness" class="slider-value-badge">0.52</span>
+                  </div>
+                  <input type="range" id="slider-lip-fullness" class="range-slider" min="0" max="1" step="0.01" value="0.52" />
+                </div>
+              </div>
+
+              <!-- Supplementary Head Structure -->
+              <div class="control-group-card">
+                <div class="group-card-header">
+                  <span class="group-card-title">Cranial & Head Proportion (FR1)</span>
+                </div>
+
+                <div class="slider-control-row">
+                  <div class="slider-label-bar">
+                    <label for="slider-gender-blend" class="slider-label">Gender Appearance Blend (FR1.2)</label>
+                    <span id="val-gender-blend" class="slider-value-badge">0.45</span>
+                  </div>
+                  <input type="range" id="slider-gender-blend" class="range-slider" min="0" max="1" step="0.01" value="0.45" />
+                </div>
+
+                <div class="slider-control-row">
+                  <div class="slider-label-bar">
+                    <label for="slider-chin-width" class="slider-label">Chin Width & Cleft</label>
+                    <span id="val-chin-width" class="slider-value-badge">0.40</span>
+                  </div>
+                  <input type="range" id="slider-chin-width" class="range-slider" min="0" max="1" step="0.01" value="0.40" />
+                </div>
+
+                <div class="slider-control-row">
+                  <div class="slider-label-bar">
+                    <label for="slider-neck-width" class="slider-label">Neck & Trapezius Width</label>
+                    <span id="val-neck-width" class="slider-value-badge">0.46</span>
+                  </div>
+                  <input type="range" id="slider-neck-width" class="range-slider" min="0" max="1" step="0.01" value="0.46" />
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB: Genetics & Family Resemblance (FR5) -->
+            <div id="tab-genetics" class="tab-pane" style="display: none;">
+              <!-- 1. Parent Selection & Blending -->
+              <div class="control-group-card">
+                <div class="group-card-header">
+                  <span class="group-card-title">Parent Inheritance (FR5.1)</span>
+                  <span class="group-card-badge">Genetics Engine</span>
+                </div>
+
+                <div class="slider-control-row">
+                  <label for="select-parent-a" class="slider-label">Parent A (Mother Baseline)</label>
+                  <select id="select-parent-a" class="btn" style="width: 100%;">
+                    <option value="char_maya_lin">Maya Lin (Mother, 32)</option>
+                    <option value="char_sora_tanaka">Sora Tanaka (24)</option>
+                  </select>
+                </div>
+
+                <div class="slider-control-row" style="margin-top: 6px;">
+                  <label for="select-parent-b" class="slider-label">Parent B (Father Baseline)</label>
+                  <select id="select-parent-b" class="btn" style="width: 100%;">
+                    <option value="char_david_vance">David Vance (Father, 42)</option>
+                    <option value="char_kofi_mensah">Kofi Mensah (30)</option>
+                    <option value="char_arthur_sterling">Arthur Sterling (Elder, 72)</option>
+                  </select>
+                </div>
+
+                <!-- 50/50 Balance Slider -->
+                <div class="slider-control-row" style="margin-top: 8px;">
+                  <div class="slider-label-bar">
+                    <label for="slider-blend-ratio" class="slider-label">Genetic Blend Balance</label>
+                    <span id="val-blend-ratio" class="slider-value-badge">50% A / 50% B</span>
+                  </div>
+                  <input type="range" id="slider-blend-ratio" class="range-slider" min="0" max="1" step="0.01" value="0.5" />
+                </div>
+
+                <!-- Allele Variation / Mutation Slider -->
+                <div class="slider-control-row">
+                  <div class="slider-label-bar">
+                    <label for="slider-blend-variance" class="slider-label">Allele Variation / Variance (σ)</label>
+                    <span id="val-blend-variance" class="slider-value-badge">0.35</span>
+                  </div>
+                  <input type="range" id="slider-blend-variance" class="range-slider" min="0" max="1" step="0.01" value="0.35" />
+                </div>
+
+                <!-- Region Locks (FR5.2) -->
+                <div style="margin-top: 6px;">
+                  <span class="slider-label" style="display: block; margin-bottom: 6px;">Feature Region Locks to Parent A:</span>
+                  <div class="checkbox-grid">
+                    <label class="checkbox-item">
+                      <input type="checkbox" id="check-lock-eyes" checked /> Eyes & Gaze
+                    </label>
+                    <label class="checkbox-item">
+                      <input type="checkbox" id="check-lock-jaw" checked /> Jaw & Chin
+                    </label>
+                    <label class="checkbox-item">
+                      <input type="checkbox" id="check-lock-nose" /> Nose Bridge
+                    </label>
+                    <label class="checkbox-item">
+                      <input type="checkbox" id="check-lock-mouth" /> Mouth & Lips
+                    </label>
+                    <label class="checkbox-item">
+                      <input type="checkbox" id="check-lock-skin" /> Skin Tone
+                    </label>
+                    <label class="checkbox-item">
+                      <input type="checkbox" id="check-lock-hair" /> Hair Palette
+                    </label>
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                  <button id="btn-generate-child" class="btn btn-primary" style="flex: 1;" title="Generate Believable Child from Parents (FR5.1)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 2v20M2 12h20"></path>
+                    </svg>
+                    Generate Child
+                  </button>
+                  <button id="btn-generate-siblings" class="btn" style="flex: 1;" title="Generate 3 Related Siblings (FR5.3)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    3 Siblings
+                  </button>
+                </div>
+              </div>
+
+              <!-- 2. Feature Region Copy Tool (FR5.5) -->
+              <div class="control-group-card">
+                <div class="group-card-header">
+                  <span class="group-card-title">Copy Region Tool (FR5.5)</span>
+                  <span class="group-card-badge">Donor Feature</span>
+                </div>
+
+                <div class="slider-control-row">
+                  <label for="select-copy-source" class="slider-label">Donor Character</label>
+                  <select id="select-copy-source" class="btn" style="width: 100%;">
+                    <option value="char_maya_lin">Maya Lin (Eyes / Tone)</option>
+                    <option value="char_david_vance">David Vance (Jaw / Brows)</option>
+                    <option value="char_arthur_sterling">Arthur Sterling</option>
+                    <option value="char_sora_tanaka">Sora Tanaka (Monolid)</option>
+                    <option value="char_kofi_mensah">Kofi Mensah</option>
+                  </select>
+                </div>
+
+                <div class="slider-control-row" style="margin-top: 6px;">
+                  <label for="select-copy-region" class="slider-label">Region to Transfer</label>
+                  <select id="select-copy-region" class="btn" style="width: 100%;">
+                    <option value="eyes">Eyes & Iris</option>
+                    <option value="nose">Nose Structure</option>
+                    <option value="mouth">Mouth & Vermilion</option>
+                    <option value="jaw">Jaw & Cranium</option>
+                    <option value="skin">Skin Melanin & Tone</option>
+                    <option value="brows">Eyebrows</option>
+                  </select>
+                </div>
+
+                <button id="btn-copy-region" class="btn" style="margin-top: 8px;" title="Transfer region to active face">
+                  Copy Region to Current Face
+                </button>
+              </div>
+            </div>
+
+            <!-- TAB 2: Detailed Features (FR2) -->
+            <div id="tab-features" class="tab-pane" style="display: none;">
+              <div class="control-group-card">
+                <div class="group-card-header">
+                  <span class="group-card-title">Eyes & Brows (FR2.1 - FR2.3)</span>
+                </div>
+
+                <div class="slider-control-row">
+                  <div class="slider-label-bar">
+                    <label for="slider-eye-size" class="slider-label">Eye Aperture Size</label>
+                    <span id="val-eye-size" class="slider-value-badge">0.52</span>
+                  </div>
+                  <input type="range" id="slider-eye-size" class="range-slider" min="0" max="1" step="0.01" value="0.52" />
+                </div>
+
+                <div class="slider-control-row">
+                  <div class="slider-label-bar">
+                    <label for="slider-eye-slant" class="slider-label">Canthal Tilt / Slant</label>
+                    <span id="val-eye-slant" class="slider-value-badge">+0.04</span>
+                  </div>
+                  <input type="range" id="slider-eye-slant" class="range-slider" min="-1" max="1" step="0.02" value="0.04" />
+                </div>
+
+                <div class="slider-control-row">
+                  <div class="slider-label-bar">
+                    <label for="slider-brow-thick" class="slider-label">Eyebrow Density / Thickness</label>
+                    <span id="val-brow-thick" class="slider-value-badge">0.46</span>
+                  </div>
+                  <input type="range" id="slider-brow-thick" class="range-slider" min="0" max="1" step="0.01" value="0.46" />
+                </div>
+              </div>
+
+              <div class="control-group-card">
+                <div class="group-card-header">
+                  <span class="group-card-title">Nose & Ears (FR2.4, FR2.6)</span>
+                </div>
+
+                <div class="slider-control-row">
+                  <div class="slider-label-bar">
+                    <label for="slider-nose-length" class="slider-label">Nose Length</label>
+                    <span id="val-nose-length" class="slider-value-badge">0.48</span>
+                  </div>
+                  <input type="range" id="slider-nose-length" class="range-slider" min="0" max="1" step="0.01" value="0.48" />
+                </div>
+
+                <div class="slider-control-row">
+                  <div class="slider-label-bar">
+                    <label for="slider-nose-hump" class="slider-label">Dorsal Bridge Hump</label>
+                    <span id="val-nose-hump" class="slider-value-badge">0.05</span>
+                  </div>
+                  <input type="range" id="slider-nose-hump" class="range-slider" min="0" max="1" step="0.01" value="0.05" />
+                </div>
+
+                <div class="slider-control-row">
+                  <div class="slider-label-bar">
+                    <label for="slider-ear-size" class="slider-label">Ear Size</label>
+                    <span id="val-ear-size" class="slider-value-badge">0.46</span>
+                  </div>
+                  <input type="range" id="slider-ear-size" class="range-slider" min="0" max="1" step="0.01" value="0.46" />
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3: Skin & Coloration (FR3) -->
+            <div id="tab-color" class="tab-pane" style="display: none;">
+              <div class="control-group-card">
+                <div class="group-card-header">
+                  <span class="group-card-title">Skin Undertone (FR3.1)</span>
+                </div>
+
+                <div class="undertone-grid">
+                  <button class="undertone-pill" data-undertone="cool-pink">Cool Pink</button>
+                  <button class="undertone-pill" data-undertone="neutral">Neutral</button>
+                  <button class="undertone-pill active" data-undertone="warm-yellow">Warm Yellow</button>
+                  <button class="undertone-pill" data-undertone="olive">Olive</button>
+                </div>
+
+                <div class="slider-control-row" style="margin-top: 10px;">
+                  <div class="slider-label-bar">
+                    <label for="slider-blush" class="slider-label">Cheek & Nose Blush (FR3.2)</label>
+                    <span id="val-blush" class="slider-value-badge">0.28</span>
+                  </div>
+                  <input type="range" id="slider-blush" class="range-slider" min="0" max="1" step="0.01" value="0.28" />
+                </div>
+              </div>
+
+              <div class="control-group-card">
+                <div class="group-card-header">
+                  <span class="group-card-title">Hair & Beard Styles (FR7)</span>
+                </div>
+
+                <div class="slider-control-row">
+                  <label class="slider-label">Hairstyle</label>
+                  <select id="select-hairstyle" class="btn" style="width: 100%;">
+                    <option value="wavy-medium" selected>Medium Wavy</option>
+                    <option value="crop-short">Short Crop</option>
+                    <option value="long-straight">Long Straight</option>
+                    <option value="afro-short">Afro Classic</option>
+                    <option value="buzz">Buzz Cut</option>
+                    <option value="bald">Bald</option>
+                  </select>
+                </div>
+
+                <div class="slider-control-row" style="margin-top: 8px;">
+                  <label class="slider-label">Beard & Stubble</label>
+                  <select id="select-beard" class="btn" style="width: 100%;">
+                    <option value="none" selected>Clean Shaven</option>
+                    <option value="stubble">Stubble Density</option>
+                    <option value="clean-beard">Trimmed Full Beard</option>
+                    <option value="full-bushy">Bushy Beard</option>
+                  </select>
+                </div>
+
+                <div class="slider-control-row" style="margin-top: 8px;">
+                  <label class="slider-label">Eyewear Accessories (FR7.4)</label>
+                  <select id="select-glasses" class="btn" style="width: 100%;">
+                    <option value="none" selected>No Glasses</option>
+                    <option value="wire-round">Round Wireframe</option>
+                    <option value="acetate-square">Square Acetate</option>
+                  </select>
+                </div>
+
+                <div class="slider-control-row" style="margin-top: 8px;">
+                  <label class="slider-label">Earrings & Piercings (FR7.4)</label>
+                  <select id="select-earrings" class="btn" style="width: 100%;">
+                    <option value="none" selected>No Earrings</option>
+                    <option value="gold-stud">Gold Studs</option>
+                    <option value="silver-hoop">Silver Hoops</option>
+                  </select>
+                </div>
+
+                <!-- Piercings & Cultural Mark Checkboxes -->
+                <div style="margin-top: 8px; display: flex; gap: 12px;">
+                  <label class="checkbox-item">
+                    <input type="checkbox" id="check-piercing-nose" /> Nostril Stud
+                  </label>
+                  <label class="checkbox-item">
+                    <input type="checkbox" id="check-forehead-dot" /> Cultural Forehead Mark (Bindi)
+                  </label>
+                </div>
+
+                <!-- Heterochromia & Gaze Controls (FR2.2) -->
+                <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
+                  <div class="slider-label-bar">
+                    <span class="slider-label">Iris Gaze & Colors (FR2.2)</span>
+                    <label class="checkbox-item" style="font-size: 0.7rem;">
+                      <input type="checkbox" id="check-heterochromia" /> Heterochromia
+                    </label>
+                  </div>
+
+                  <div style="display: flex; gap: 8px; margin-top: 6px;">
+                    <div style="flex: 1;">
+                      <label class="slider-label" style="font-size: 0.68rem;">Left Eye Color</label>
+                      <input type="color" id="color-iris-l" value="#3b6e56" style="width: 100%; height: 28px; border-radius: 4px; border: 1px solid var(--border-subtle); background: transparent; cursor: pointer;" />
+                    </div>
+                    <div style="flex: 1;" id="wrap-iris-r">
+                      <label class="slider-label" style="font-size: 0.68rem;">Right Eye Color</label>
+                      <input type="color" id="color-iris-r" value="#3b6e56" style="width: 100%; height: 28px; border-radius: 4px; border: 1px solid var(--border-subtle); background: transparent; cursor: pointer;" />
+                    </div>
+                  </div>
+
+                  <div class="slider-control-row" style="margin-top: 6px;">
+                    <div class="slider-label-bar">
+                      <label for="slider-gaze-x" class="slider-label">Gaze X (Left / Right)</label>
+                      <span id="val-gaze-x" class="slider-value-badge">0.00</span>
+                    </div>
+                    <input type="range" id="slider-gaze-x" class="range-slider" min="-1" max="1" step="0.05" value="0.0" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 4: Expressions & Board Acting (FR6) -->
+            <div id="tab-expression" class="tab-pane" style="display: none;">
+              <!-- 1. Base Emotions (FR6.1) -->
+              <div class="control-group-card">
+                <div class="group-card-header">
+                  <span class="group-card-title">8 Base Emotions (FR6.1)</span>
+                </div>
+
+                <div class="preset-chips-row">
+                  <button class="chip-btn active" data-emotion="neutral">Neutral</button>
+                  <button class="chip-btn" data-emotion="happy">Joy / Smile</button>
+                  <button class="chip-btn" data-emotion="sad">Sadness</button>
+                  <button class="chip-btn" data-emotion="angry">Anger</button>
+                  <button class="chip-btn" data-emotion="surprise">Surprise</button>
+                  <button class="chip-btn" data-emotion="fear">Fear</button>
+                  <button class="chip-btn" data-emotion="disgust">Disgust</button>
+                  <button class="chip-btn" data-emotion="contempt">Contempt</button>
+                </div>
+
+                <div class="slider-control-row" style="margin-top: 10px;">
+                  <div class="slider-label-bar">
+                    <label for="slider-emotion-str" class="slider-label">Primary Emotion Strength</label>
+                    <span id="val-emotion-str" class="slider-value-badge">1.0</span>
+                  </div>
+                  <input type="range" id="slider-emotion-str" class="range-slider" min="0" max="1" step="0.05" value="1.0" />
+                </div>
+              </div>
+
+              <!-- 2. Emotion Mixer (FR6.2) -->
+              <div class="control-group-card">
+                <div class="group-card-header">
+                  <span class="group-card-title">2-Way Emotion Mixer (FR6.2)</span>
+                  <span class="group-card-badge">FACS Blending</span>
+                </div>
+
+                <div class="slider-control-row">
+                  <label for="select-secondary-emotion" class="slider-label">Secondary Blended Emotion</label>
+                  <select id="select-secondary-emotion" class="btn" style="width: 100%;">
+                    <option value="neutral">Neutral (None)</option>
+                    <option value="happy">Joy / Smile</option>
+                    <option value="sad">Sadness</option>
+                    <option value="angry">Anger</option>
+                    <option value="surprise">Surprise</option>
+                    <option value="fear">Fear</option>
+                    <option value="disgust">Disgust</option>
+                    <option value="contempt">Contempt (Smirk)</option>
+                  </select>
+                </div>
+
+                <div class="slider-control-row" style="margin-top: 8px;">
+                  <div class="slider-label-bar">
+                    <label for="slider-emotion-blend" class="slider-label">Secondary Blend Proportion</label>
+                    <span id="val-emotion-blend" class="slider-value-badge">0% Secondary</span>
+                  </div>
+                  <input type="range" id="slider-emotion-blend" class="range-slider" min="0" max="1" step="0.02" value="0.0" />
+                </div>
+              </div>
+
+              <!-- 3. Talking Shapes & Animatic Speech Cycle (FR6.3, FR6.5) -->
+              <div class="control-group-card">
+                <div class="group-card-header">
+                  <span class="group-card-title">Talking Visemes & Speech Cycle (FR6.3, FR6.5)</span>
+                  <button id="btn-play-speech-anim" class="btn btn-icon-only" title="Play Animatic Talk/Blink Loop (FR6.5)" style="padding: 3px 8px;">
+                    <svg id="icon-speech-play" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                      <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                  </button>
+                </div>
+
+                <div class="preset-chips-row">
+                  <button class="chip-btn active" data-viseme="rest">Rest (Closed)</button>
+                  <button class="chip-btn" data-viseme="aa">AA ("Ah" Open)</button>
+                  <button class="chip-btn" data-viseme="ee">EE ("Ee" Wide)</button>
+                  <button class="chip-btn" data-viseme="oo">OO ("Oo" Round)</button>
+                  <button class="chip-btn" data-viseme="wide">Shout Wide</button>
+                  <button class="chip-btn" data-viseme="frown">Pout / Frown</button>
+                </div>
+
+                <!-- Asymmetry Controls (FR6.4) -->
+                <div class="slider-control-row" style="margin-top: 10px;">
+                  <div class="slider-label-bar">
+                    <label for="slider-one-brow" class="slider-label">Asymmetric Brow Raise (FR6.4)</label>
+                    <span id="val-one-brow" class="slider-value-badge">0.00</span>
+                  </div>
+                  <input type="range" id="slider-one-brow" class="range-slider" min="-1" max="1" step="0.05" value="0.0" />
+                </div>
+
+                <div class="slider-control-row">
+                  <div class="slider-label-bar">
+                    <label for="slider-crooked-smile" class="slider-label">Crooked Smile / Asymmetric Curl (FR6.4)</label>
+                    <span id="val-crooked-smile" class="slider-value-badge">0.00</span>
+                  </div>
+                  <input type="range" id="slider-crooked-smile" class="range-slider" min="-1" max="1" step="0.05" value="0.0" />
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 6: Art Style & Line Quality (FR9) -->
+            <div id="tab-style" class="tab-pane" style="display: none;">
+              <div class="control-group-card">
+                <div class="group-card-header">
+                  <span class="group-card-title">Named Style Presets (FR9.2, FR9.3)</span>
+                </div>
+                <div class="style-preset-grid">
+                  <button class="style-card-btn active" data-style-preset="soft-shade">
+                    <span class="style-card-title">Soft-Shaded Standard</span>
+                    <span class="style-card-desc">Smooth vector gradients & ambient shadows</span>
+                  </button>
+                  <button class="style-card-btn" data-style-preset="flat">
+                    <span class="style-card-title">Flat Comic / Webtoon</span>
+                    <span class="style-card-desc">Solid tones, cel-shaded clean vectors</span>
+                  </button>
+                  <button class="style-card-btn" data-style-preset="cartoon-shade">
+                    <span class="style-card-title">Cartoon / Feature</span>
+                    <span class="style-card-desc">Bold expressive strokes & saturated palette</span>
+                  </button>
+                  <button class="style-card-btn" data-style-preset="sketch">
+                    <span class="style-card-title">Pencil Sketch Draft</span>
+                    <span class="style-card-desc">Graphite line wobble on parchment paper</span>
+                  </button>
+                  <button class="style-card-btn" data-style-preset="noir">
+                    <span class="style-card-title">High-Contrast Noir</span>
+                    <span class="style-card-desc">Deep ink shadows & dramatic angles</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="control-group-card">
+                <div class="group-card-header">
+                  <span class="group-card-title">Line Quality & Wobble (FR9.1)</span>
+                </div>
+                <div class="slider-control-row">
+                  <div class="slider-label-bar">
+                    <label for="slider-line-weight" class="slider-label">Line Weight</label>
+                    <span id="val-line-weight" class="slider-value-badge">1.20</span>
+                  </div>
+                  <input type="range" id="slider-line-weight" class="range-slider" min="0.5" max="3.0" step="0.1" value="1.2" />
+                </div>
+                <div class="slider-control-row">
+                  <div class="slider-label-bar">
+                    <label for="slider-line-wobble" class="slider-label">Hand-Drawn Wobble / Jitter</label>
+                    <span id="val-line-wobble" class="slider-value-badge">0.00</span>
+                  </div>
+                  <input type="range" id="slider-line-wobble" class="range-slider" min="0" max="1" step="0.05" value="0.0" />
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 7: Text from Novel Prose Parser (FR10.3) -->
+            <div id="tab-novel" class="tab-pane" style="display: none;">
+              <div class="control-group-card">
+                <div class="group-card-header">
+                  <span class="group-card-title">Novel Prose NLP Extractor (FR10.3)</span>
+                  <span class="group-card-badge">100% Offline</span>
+                </div>
+                <p style="font-size: 0.73rem; color: var(--text-muted); margin-bottom: 8px;">
+                  Paste a natural language character excerpt from your novel. The rule-based analyzer extracts age, cranial shapes, coloration, and unique scars.
+                </p>
+                <textarea id="textarea-prose" class="prose-input-box" placeholder="e.g. Marcus Thorne, a 48-year-old veteran with a chiseled square jaw, a scar across his brow, piercing blue eyes, and graying stubble..."></textarea>
+
+                <div style="margin-top: 6px;">
+                  <span style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Quick Sample Quotes:</span>
+                  <div class="sample-quotes-grid">
+                    <button class="quote-chip" data-sample-quote="veteran">Veteran Commander (48yo)</button>
+                    <button class="quote-chip" data-sample-quote="apprentice">Young Apprentice (16yo)</button>
+                    <button class="quote-chip" data-sample-quote="scholar">Elder Scholar (72yo)</button>
+                    <button class="quote-chip" data-sample-quote="diplomat">Chief Diplomat (34yo)</button>
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                  <button id="btn-analyze-prose" class="btn btn-primary" style="flex: 1;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    Analyze Prose
+                  </button>
+                  <button id="btn-apply-prose" class="btn" style="flex: 1;" disabled>
+                    Apply to Studio
+                  </button>
+                </div>
+
+                <!-- Matched Traits Display -->
+                <div id="prose-result-card" style="margin-top: 12px; display: none;">
+                  <span style="font-size: 0.72rem; color: #a5b4fc; font-weight: 600;">Detected Character Traits:</span>
+                  <div id="prose-tags-container" class="prose-tags-wrap"></div>
+                  <p id="prose-summary-text" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px; font-style: italic;"></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 8: Cast Roster & Global Story Year (FR10.1, FR11.1, FR11.2) -->
+            <div id="tab-cast" class="tab-pane" style="display: none;">
+              <!-- Master Story Year Scrubber (FR11.2) -->
+              <div class="story-year-scrubber-card">
+                <div class="story-year-header">
+                  <div class="story-year-title">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>Master Story Year Scrubber</span>
+                  </div>
+                  <span id="display-story-year" class="story-year-badge">Year 2024</span>
+                </div>
+                <input type="range" id="slider-story-year" class="range-slider" min="1990" max="2060" step="1" value="2024" />
+                <p style="font-size: 0.68rem; color: #94a3b8; margin-top: 6px;">
+                  Scrubbing the timeline dynamically recalculates each cast member's age (Age = Story Year - Birth Year).
+                </p>
+              </div>
+
+              <!-- Randomize Face with Region Locks (FR10.2) -->
+              <div class="control-group-card">
+                <div class="group-card-header">
+                  <span class="group-card-title">Randomize Face with Region Locks (FR10.2)</span>
+                </div>
+                <div class="checkbox-grid" style="margin-bottom: 10px;">
+                  <label class="checkbox-item"><input type="checkbox" id="check-rand-eyes" /> Lock Eyes</label>
+                  <label class="checkbox-item"><input type="checkbox" id="check-rand-jaw" /> Lock Jaw/Chin</label>
+                  <label class="checkbox-item"><input type="checkbox" id="check-rand-nose" /> Lock Nose</label>
+                  <label class="checkbox-item"><input type="checkbox" id="check-rand-mouth" /> Lock Mouth</label>
+                  <label class="checkbox-item"><input type="checkbox" id="check-rand-skin" /> Lock Skin Tone</label>
+                  <label class="checkbox-item"><input type="checkbox" id="check-rand-hair" /> Lock Hair</label>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button id="btn-randomize-face" class="btn btn-primary" style="flex: 1;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="23 4 23 10 17 10"></polyline>
+                      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                    </svg>
+                    Roll Random Face
+                  </button>
+                  <button id="btn-add-to-cast" class="btn" title="Add Current Face to Roster">
+                    + Save to Cast
+                  </button>
+                </div>
+              </div>
+
+              <!-- 32 Starter Cast Roster (FR10.1, FR11.1) -->
+              <div class="control-group-card">
+                <div class="group-card-header">
+                  <span class="group-card-title">Film Cast Roster (32 Members)</span>
+                  <span class="group-card-badge" id="cast-count-badge">32 Active</span>
+                </div>
+
+                <!-- Cast Filter Tabs -->
+                <div class="cast-filter-bar">
+                  <button class="cast-filter-pill active" data-cast-filter="all">All (32)</button>
+                  <button class="cast-filter-pill" data-cast-filter="children">Kids/Teens</button>
+                  <button class="cast-filter-pill" data-cast-filter="young-adults">Young Adults</button>
+                  <button class="cast-filter-pill" data-cast-filter="adults">Adults</button>
+                  <button class="cast-filter-pill" data-cast-filter="middle-age">Middle-Age</button>
+                  <button class="cast-filter-pill" data-cast-filter="elders">Elders</button>
+                </div>
+
+                <!-- Dynamic Grid of 32 Characters -->
+                <div id="cast-cards-grid" class="cast-grid"></div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </main>
+
+      <!-- Character Bible Printable Modal (FR13.3) -->
+      <div id="modal-character-bible" class="modal-overlay">
+        <div class="modal-bible-sheet">
+          <div class="modal-bible-header">
+            <div>
+              <h2 id="bible-char-name" style="font-size: 1.25rem; font-weight: 700;">Character Bible</h2>
+              <p style="font-size: 0.74rem; color: var(--text-muted);">Cinematic Casting & Continuity Turnaround Sheet</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button id="btn-print-bible" class="btn btn-primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                  <rect x="6" y="14" width="12" height="8"></rect>
+                </svg>
+                Print / Save PDF
+              </button>
+              <button id="btn-close-bible" class="btn btn-icon-only" title="Close">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="modal-bible-body">
+            <div id="bible-portrait-container" class="bible-portrait-frame"></div>
+            <div class="bible-details-wrap">
+              <div id="bible-narrative-text" class="bible-narrative-box"></div>
+
+              <div>
+                <span style="font-size: 0.72rem; color: #94a3b8; text-transform: uppercase; font-weight: 600;">Color Palette Specs</span>
+                <div id="bible-swatches-container" class="bible-swatches-row" style="margin-top: 6px;"></div>
+              </div>
+
+              <div>
+                <span style="font-size: 0.72rem; color: #94a3b8; text-transform: uppercase; font-weight: 600;">Cranial & Feature Metrics</span>
+                <div id="bible-metrics-container" style="margin-top: 6px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast Feedback Popup -->
+      <div id="toast-message" class="toast-notice">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span id="toast-text">Action completed successfully</span>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
